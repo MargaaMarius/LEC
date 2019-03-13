@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fantasy LEC</title>
+    <link type="text/css"
+          rel="stylesheet"
+          href="LEC_stiler.css">
+    <link rel="icon" href="bilder/leclogotransparent.png">
+  <script src="https://www.gstatic.com/firebasejs/5.8.2/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCD3UFf10gPrGUW6w3gt-z9kt8Iq_4rOPw",
+      authDomain: "fantasy-lec.firebaseapp.com",
+      databaseURL: "https://fantasy-lec.firebaseio.com",
+      projectId: "fantasy-lec",
+      storageBucket: "",
+      messagingSenderId: "34381750647"
+    };
+    firebase.initializeApp(config);
+  </script>
+</head>
+<body>
+<div id="login">
+  <!-- Dette elementet skal være det eneste man ser før man logger inn. Her logger man inn, eller oppretter en bruker. Etter å ha logget inn, forsvinner dette elementet, og hovednettsiden vises -->
+  <img src="bilder/leclogo-mono.jpg">
+  <form id="loginForm" onsubmit="LogIn(event)">
+    <h1>Logg in</h1>
+    <input type="text" required id="LogInBrukernavn" placeholder="Brukernavn">
+    <input type="password" required id="LogInPassord" placeholder="Passord">
+    <button type="submit">Logg inn</button>
+  </form>
+  <form id="registrerForm" onsubmit="registrerBruker(event)">
+    <h1>Registrer bruker</h1>
+    <input type="text" required id="registrerBrukernavn" placeholder="Brukernavn">
+    <input type="password" required id="registrerPassord" placeholder="Passord">
+    <button type="submit">Opprett bruker</button>
+  </form>
+</div>
+<header>
+</header>
+<main>
+  <br>
+  <br>
+  <br>
+  <img src="bilder/leclogotransparent.png">
+  <h1 id="title">LEC</h1>
+  <section id="lag">
+
+  </section>
+  <!-- Denne seksjonen kan bare brukeren som er admin se -->
+  <section id="admin">
+    <h2>Sett opp en kamp:</h2>
+    <form id="matchregistration" onsubmit="registrerMatch(event)">
+      <label>Lag 1:<select id="adminInpLag1">
+        <option value="TBD">TBD</option>
+      </select></label>
+      <label>Lag 2:<select id="adminInpLag2">
+        <option value="TBD">TBD</option>
+      </select></label>
+      <button type="submit">Send inn</button>
+    </form>
+  </section>
+  <section id="valg">
+
+  </section>
+  <section id="historie">
+
+  </section>
+</main>
+<footer>
+  <p>Laget og administrert av Marius Berdal Gaalaas</p>
+</footer>
+<script>
+  let database = firebase.database();
+  let brukere = database.ref("brukere");
+  let bruker;
+  let lag = database.ref("lag");
+
+  // Funksjoner
+  //Registrer en bruker og legger det til i en database
+  function registrerBruker(event){
+    event.preventDefault();
+    let brukernavnRegistrer = document.querySelector("#registrerBrukernavn");
+    let passordRegistrer = document.querySelector("#registrerPassord");
+    let registrerSkjema = document.querySelector("#registrerForm");
+    brukere.push({
+      "brukernavn":brukernavnRegistrer.value,
+      "passord":passordRegistrer.value,
+      "admin":false,
+      "poeng":0
+    });
+    registrerSkjema.reset();
+  }
+  //De to neste funksjonene logger deg inn, og ordner slik at login siden forsvinner og resten kommer til syne
+  function LogIn(event){
+    event.preventDefault();
+    brukere.on("child_added", hentBrukereLogIn);
+  }
+  function hentBrukereLogIn(snapshotLogIn){
+    let brukernavn = document.querySelector("#LogInBrukernavn");
+    let passord = document.querySelector("#LogInPassord");
+    bruker = snapshotLogIn.val();
+    if (brukernavn.value ==bruker.brukernavn && passord.value==bruker.passord){
+      console.log("Logget inn på brukeren " + brukernavn.value);
+      let loginscreen = document.querySelector("#login");
+      let header = document.querySelector("header");
+      let main = document.querySelector("main");
+      let footer = document.querySelector("footer");
+
+      loginscreen.style.display = "none";
+      header.style.display = "block";
+      main.style.display = "grid";
+      footer.style.display = "block";
+
+      if (bruker.admin){
+        let admindel = document.querySelector("#admin");
+        admindel.style.display = "block";
+      }
+
+      header.innerHTML += `
+      <p>${brukernavn.value}</p><p>${bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
+      `;
+    }
+  }
+  function hentLag(snapshotLag){
+    let lagdel = document.querySelector("#lag");
+    let lagKey = snapshotLag.key;
+    let lag = snapshotLag.val();
+    console.log(lag.logo);
+    lagdel.innerHTML += `
+    <a href=${lag.link}><img src=${lag.logo} title=${lag.navn}></a>
+    `;
+    let adminLag1 = document.querySelector("#adminInpLag1");
+    let adminLag2 = document.querySelector("#adminInpLag2");
+    adminLag1.innerHTML +=`
+    <option value="${lagKey}">${lag.navn}</option>
+    `;
+    adminLag2.innerHTML +=`
+    <option value="${lagKey}">${lag.navn}</option>
+    `;
+  }
+  function registrerMatch(event){
+    event.preventDefault();
+    let regiLag1 = document.querySelector("#adminInpLag1");
+    let regiLag2 = document.querySelector("#adminInpLag2");
+  }
+
+  lag.on("child_added", hentLag);
+</script>
+</body>
+</html>
