@@ -44,8 +44,10 @@
   <br>
   <br>
   <br>
-  <img src="bilder/leclogotransparent.png">
-  <h1 id="title">LEC</h1>
+  <section id="tittel">
+    <img src="bilder/leclogotransparent.png">
+    <h1 id="title">LEC</h1>
+  </section>
   <section id="lag">
 
   </section>
@@ -59,11 +61,32 @@
       <label>Lag 2:<select id="adminInpLag2">
         <option value="TBD">TBD</option>
       </select></label>
+      <label>Runde:<select id="rundeInp">
+        <option value="1">Runde 1</option>
+        <option value="2">Runde 2</option>
+        <option value="3">Runde 3</option>
+        <option value="4">Finale</option>
+      </select></label>
+      <label>Kamp nummer:<select id="kampNrInp">
+        <option value="1">1</option>
+        <option value="2">2</option>
+      </select></label>
       <button type="submit">Send inn</button>
     </form>
   </section>
-  <section id="valg">
+  <section id="kampListe">
 
+  </section>
+  <section id="leaderboard">
+    <table>
+      <thead>
+        <th>Poeng</th>
+        <th>Bruker</th>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
   </section>
   <section id="historie">
 
@@ -77,6 +100,7 @@
   let brukere = database.ref("brukere");
   let bruker;
   let lag = database.ref("lag");
+  let kamper = database.ref("kamper");
 
   // Funksjoner
   //Registrer en bruker og legger det til i en database
@@ -103,7 +127,6 @@
     let passord = document.querySelector("#LogInPassord");
     bruker = snapshotLogIn.val();
     if (brukernavn.value ==bruker.brukernavn && passord.value==bruker.passord){
-      console.log("Logget inn på brukeren " + brukernavn.value);
       let loginscreen = document.querySelector("#login");
       let header = document.querySelector("header");
       let main = document.querySelector("main");
@@ -120,7 +143,7 @@
       }
 
       header.innerHTML += `
-      <p>${brukernavn.value}</p><p>${bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
+      <p>${brukernavn.value}</p><p>${-bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
       `;
     }
   }
@@ -128,7 +151,6 @@
     let lagdel = document.querySelector("#lag");
     let lagKey = snapshotLag.key;
     let lag = snapshotLag.val();
-    console.log(lag.logo);
     lagdel.innerHTML += `
     <a href=${lag.link}><img src=${lag.logo} title=${lag.navn}></a>
     `;
@@ -145,9 +167,61 @@
     event.preventDefault();
     let regiLag1 = document.querySelector("#adminInpLag1");
     let regiLag2 = document.querySelector("#adminInpLag2");
+    let regiRunde = document.querySelector("#rundeInp");
+    let regiKampNr = document.querySelector("#kampNrInp");
+    kamper.push({
+      "lag1": regiLag1.value,
+      "lag2": regiLag2.value,
+      "runde": regiRunde.value,
+      "kampnummer": regiKampNr.value,
+      "lag1resultat": "TBD",
+      "lag2resultat": "TBD",
+      "vinner": "TBD"
+    });
   }
-
+  function Leaderboard(snapshotBrukere){
+    let brukerL = snapshotBrukere.val();
+    let tabell = document.querySelector("tbody");
+    tabell.innerHTML += `
+    <tr>
+      <td>${-brukerL.poeng}</td>
+      <td>${brukerL.brukernavn}</td>
+    </tr>
+    `;
+  }
+  function hentkamper(snapshotKamper){
+    let kampListe = document.querySelector("#kampListe");
+    let kamp = snapshotKamper.val();
+    let kampID = kamp.runde.value + "-" + kamp.kampnummer.value;
+    let kampID1 = kamp.runde.value + "-" + kamp.kampnummer.value + "L1";
+    let kampID2 = kamp.runde.value + "-" + kamp.kampnummer.value + "L2";
+    let lagref1 = database.ref("lag/"+kamp.lag1);
+    let lagref2 = database.ref("lag/"+kamp.lag2);
+    kampListe.innerHTML +=`
+    <div class="kamp"><div id=${kampID1}></div><div id=${kampID2}></div><form id=${kampID}></form></div>
+    `;
+    lagref1.once("value", function (snapshotLag1){
+      let lag1 = snapshotLag1.val();
+      let lag1display = document.querySelector("#" + kampID1);
+      lag1display.innerHTML += `
+      <img src=${lag1.logo}>
+      <p>${lag1.navn}</p>
+      `;
+    });
+    lagref2.once("value", function (snapshotLag2){
+      let lag2 = snapshotLag2.val();
+      let lag2display = document.querySelector("#" + kampID2);
+      lag2display.innerHTML += `
+      <img src=${lag2.logo}>
+      <p>${lag2.navn}</p>
+      `;
+    });
+  }
+  brukere
+    .orderByChild("poeng")
+    .on("child_added", Leaderboard);
   lag.on("child_added", hentLag);
+  kamper.on("child_added", hentkamper);
 </script>
 </body>
 </html>

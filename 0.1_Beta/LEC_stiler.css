@@ -50,6 +50,7 @@ header{
   text-align: right;
   position: fixed;
   width:100%;
+  z-index: 1;
 }
 header *{
   margin: 5px;
@@ -58,10 +59,12 @@ header *{
 /* CSS for main */
 main{
   display:none;
-  background-color: whitesmoke;
   width: 75%;
   margin: 0 auto;
   text-align: center;
+}
+main section{
+  margin-bottom: 10vh;
 }
 main img{
   width: 25vw;
@@ -74,7 +77,7 @@ main #lag{
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 5vw;
-  margin: 0 2.5vw;
+  margin: 0 2.5vw 10vh 2.5vw;
 }
 main #lag a{
   padding-top: 100%;
@@ -85,12 +88,12 @@ main #lag a{
 main #lag img{
   width:80%;
   max-height: 80%;
-  margin: auto auto;
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  margin: auto auto;
 }
 main #lag a:hover{
   transform: scale(1.2);
@@ -98,6 +101,36 @@ main #lag a:hover{
 }
 main #admin{
   display: none;
+}
+main .kamp{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  color: white;
+  padding: 2vw;
+}
+main .kamp div{
+  padding-top: 100%;
+  position: relative;
+  background-color: #040019;
+  width: 100%;
+}
+main .kamp div:first-child{
+  border-radius: 10% 10% 0 0;
+}
+main .kamp div:last-child{
+  border-radius: 0 0 10% 10%;
+}
+main .kamp img{
+  width:50%;
+  max-height: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+main .kamp form{
+  grid-column: span 2;
 }
 /* CSS for footer*/
 footer{
