@@ -102,35 +102,54 @@ main #lag a:hover{
 main #admin{
   display: none;
 }
+main #admin div{
+  background-color: green;
+}
 main .kamp{
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   color: white;
   padding: 2vw;
 }
-main .kamp div{
+main .kamp > div{
   padding-top: 100%;
   position: relative;
   background-color: #040019;
   width: 100%;
 }
-main .kamp div:first-child{
-  border-radius: 10% 10% 0 0;
+main .kamp > div:first-child{
+  border-radius: 10% 0 0 0;
 }
-main .kamp div:last-child{
-  border-radius: 0 0 10% 10%;
+main .kamp > div:nth-child(3){
+  border-radius: 0 10% 0 0;
 }
 main .kamp img{
   width:50%;
   max-height: 50%;
   position: absolute;
-  top: 0;
+  top: 20%;
   left: 0;
   bottom: 0;
   right: 0;
 }
 main .kamp form{
-  grid-column: span 2;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-column: span 3;
+}
+main .kamp form select{
+  width: 50%;
+  margin: 0 auto;
+}
+main .kamp form div{
+  background-color: #040019;
+}
+main .kamp form div:nth-child(4){
+  border-radius: 0 0 0 10%;
+}
+main .kamp form div:nth-child(6){
+  border-radius: 0 0 10% 0;
 }
 /* CSS for footer*/
 footer{

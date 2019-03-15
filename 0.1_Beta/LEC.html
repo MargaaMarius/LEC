@@ -99,8 +99,10 @@
   let database = firebase.database();
   let brukere = database.ref("brukere");
   let bruker;
+  let brukerKey
   let lag = database.ref("lag");
   let kamper = database.ref("kamper");
+  let admindel = document.querySelector("#admin");
 
   // Funksjoner
   //Registrer en bruker og legger det til i en database
@@ -126,6 +128,7 @@
     let brukernavn = document.querySelector("#LogInBrukernavn");
     let passord = document.querySelector("#LogInPassord");
     bruker = snapshotLogIn.val();
+    brukerKey = snapshotLogIn.key;
     if (brukernavn.value ==bruker.brukernavn && passord.value==bruker.passord){
       let loginscreen = document.querySelector("#login");
       let header = document.querySelector("header");
@@ -138,7 +141,6 @@
       footer.style.display = "block";
 
       if (bruker.admin){
-        let admindel = document.querySelector("#admin");
         admindel.style.display = "block";
       }
 
@@ -147,6 +149,7 @@
       `;
     }
   }
+  //Henter lagenes logo til delen under overskriften, og legger til alle lagene som valgmuligheter i select-elementet der adminen legger til en kamp
   function hentLag(snapshotLag){
     let lagdel = document.querySelector("#lag");
     let lagKey = snapshotLag.key;
@@ -163,6 +166,7 @@
     <option value="${lagKey}">${lag.navn}</option>
     `;
   }
+  //Pusher kampen som adminen har lagt inn, til databasen
   function registrerMatch(event){
     event.preventDefault();
     let regiLag1 = document.querySelector("#adminInpLag1");
@@ -179,6 +183,7 @@
       "vinner": "TBD"
     });
   }
+  //Setter opp poenglisten. Siden Firebase bare sorterer i stigende rekkefølge, får man minuspoeng for å gjette riktig, men på nettsiden fjerner vi fortegnet, slik at en med -5 poeng i databasen har 5 poegn på nettsiden
   function Leaderboard(snapshotBrukere){
     let brukerL = snapshotBrukere.val();
     let tabell = document.querySelector("tbody");
@@ -189,32 +194,108 @@
     </tr>
     `;
   }
-  function hentkamper(snapshotKamper){
+  //Når adminen har lagt inn en kamp, lages et element som er tilgjengelig for alle. Dette viser hvem som spiller kampen og lar brukeren gjette vinneren og stillingen. Hver kamp er best av 5, så det er unødvendig med verdier høyere enn 3 når man skal gjette stillingen. Derfor har jeg brukt select istedet for input type="number". I tillegg lages et element som bare admin kan se. Her kan man legge inn resultatene til kampen
+  function hentkamper(snapshotKamper) {
     let kampListe = document.querySelector("#kampListe");
     let kamp = snapshotKamper.val();
-    let kampID = kamp.runde.value + "-" + kamp.kampnummer.value;
-    let kampID1 = kamp.runde.value + "-" + kamp.kampnummer.value + "L1";
-    let kampID2 = kamp.runde.value + "-" + kamp.kampnummer.value + "L2";
-    let lagref1 = database.ref("lag/"+kamp.lag1);
-    let lagref2 = database.ref("lag/"+kamp.lag2);
-    kampListe.innerHTML +=`
-    <div class="kamp"><div id=${kampID1}></div><div id=${kampID2}></div><form id=${kampID}></form></div>
+    let kampID = "runde" + kamp.runde + "kamp" + kamp.kampnummer;
+    let kampID1 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "L1";
+    let kampID2 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "L2";
+    let kampIDForm = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form";
+    let kampIDFormLag1 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form1";
+    let kampIDFormLag2 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form2";
+    let kampIDFormVinner = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "vinner";
+    let lagref1 = database.ref("lag/" + kamp.lag1);
+    let lagref2 = database.ref("lag/" + kamp.lag2);
+    kampListe.innerHTML += `
+    <div class="kamp" id=${kampID}>
+      <div id=${kampID1}></div>
+      <div>
+        <h2>Mot</h2>
+      </div>
+      <div id=${kampID2}></div>
+      <form id=${kampIDForm}>
+        <div><select id=${kampIDFormLag1}>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select></div>
+        <div><select id=${kampIDFormVinner}>
+          <option>Vinner</option>
+        </select></div>
+        <div><select id=${kampIDFormLag2}>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select></div>
+        <div></div>
+        <button type="submit">Send inn</button>
+        <div></div>
+      </form>
+    </div>
     `;
-    lagref1.once("value", function (snapshotLag1){
+    admindel.innerHTML += `
+    <div class="kamp" id=${kampID + "a"}>
+      <div id=${kampID1 + "a"}></div>
+      <div>
+        <h2>Mot</h2>
+      </div>
+      <div id=${kampID2 + "a"}></div>
+      <form id=${kampIDForm + "a"}>
+        <div><select id=${kampIDFormLag1 + "a"}>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select></div>
+        <div><select id=${kampIDFormVinner + "a"}>
+          <option>Vinner</option>
+        </select></div>
+        <div><select id=${kampIDFormLag2 + "a"}>
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select></div>
+        <div></div>
+        <button type="submit">Send inn</button>
+        <div></div>
+      </form>
+    </div>`;
+    let kampVinnerValg = document.querySelector("#" + kampIDFormVinner);
+    lagref1.once("value", function (snapshotLag1) {
+      let lag1Key = snapshotLag1.key;
       let lag1 = snapshotLag1.val();
       let lag1display = document.querySelector("#" + kampID1);
+      let lag1displayadmin = document.querySelector("#" + kampID1 + "a");
       lag1display.innerHTML += `
       <img src=${lag1.logo}>
-      <p>${lag1.navn}</p>
+      <h3>${lag1.navn}</h3>
       `;
+      kampVinnerValg.innerHTML += `<option value=${lag1Key}>${lag1.navn}</option>`;
+      lag1displayadmin.innerHTML += `
+      <img src=${lag1.logo}>
+      <h3>${lag1.navn}</h3>
+      `;
+      kampVinnerValg.innerHTML += `<option value=${lag1Key}>${lag1.navn}</option>`;
     });
-    lagref2.once("value", function (snapshotLag2){
+    lagref2.once("value", function (snapshotLag2) {
+      let lag2Key = snapshotLag2.key;
       let lag2 = snapshotLag2.val();
       let lag2display = document.querySelector("#" + kampID2);
       lag2display.innerHTML += `
       <img src=${lag2.logo}>
-      <p>${lag2.navn}</p>
+      <h3>${lag2.navn}</h3>
       `;
+      kampVinnerValg.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
+      let lag2displayadmin = document.querySelector("#" + kampID2 + "a");
+      lag2displayadmin.innerHTML += `
+      <img src=${lag2.logo}>
+      <h3>${lag2.navn}</h3>
+      `;
+      kampVinnerValg.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
     });
   }
   brukere
