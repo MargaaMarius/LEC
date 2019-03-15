@@ -41,9 +41,8 @@
 <header>
 </header>
 <main>
-  <br>
-  <br>
-  <br>
+  <div class="gradient"></div>
+  <div class="innhold">
   <section id="tittel">
     <img src="bilder/leclogotransparent.png">
     <h1 id="title">LEC</h1>
@@ -77,6 +76,7 @@
     <h2>Gjett kampresultater:</h2>
   </section>
   <section id="leaderboard">
+    <button onclick="regnUtPoeng()">Regn ut poeng</button>
     <table>
       <thead>
         <th>Poeng</th>
@@ -90,6 +90,8 @@
   <section id="historie">
 
   </section>
+</div>
+  <div class="gradient"></div>
 </main>
 <footer>
   <p>Laget og administrert av Marius Berdal Gaalaas</p>
@@ -103,6 +105,8 @@
   let kamper = database.ref("kamper");
   let admindel = document.querySelector("#admin");
   let gjett = database.ref("gjett");
+  let brukerObj;
+  let kampObj;
 
   // Funksjoner
   //Registrer en bruker og legger det til i en database
@@ -207,9 +211,10 @@
     let lagref2 = database.ref("lag/" + kamp.lag2);
     kampListe.innerHTML += `
     <div class="kamp" id=${kampID}>
+    <h2>${kampID}</h2>
       <div id=${kampID + "L1"}></div>
       <div>
-        <h2>Mot</h2>
+        <h2>Vinner</h2>
       </div>
       <div id=${kampID + "L2"}></div>
       <form id=${kampID + "form"} onsubmit="registrerGjett(event,${kampID},${kampID + "form1"},${kampID + "form2"}, ${kampID + "vinner"})">
@@ -236,9 +241,10 @@
     `;
     admindel.innerHTML += `
     <div class="kamp" id=${kampID+ "a"}>
+    <h2>${kampID}</h2>
       <div id=${kampID + "L1" + "a"}></div>
       <div>
-        <h2>Mot</h2>
+        <h2>Vinner</h2>
       </div>
       <div id=${kampID+ "L2" + "a"}></div>
       <form id=${kampID + "form" + "a"} onsubmit="registrerResultat(event,${kampID},${kampID + "form1"+"a"},${kampID + "form2"+"a"}, ${kampID + "vinner"+"a"})">
@@ -307,7 +313,8 @@
       "lag1stilling":lag1stilling.value,
       "lag2stilling":lag2stilling.value,
       "bruker":LoggetPåBrukerKey,
-      "kamp":kampGjett.id
+      "kamp":kampGjett.id,
+      "poeng":0
     };
     let Gjett = gjett.child(gjettKey);
     Gjett.set(gjettData);
@@ -324,18 +331,52 @@
     let resultat = kamper.child(resultatKey);
     resultat.update(resultatData);
   }
+
   //Ser på alle gjettene, sammenlikner dem med resultatet i den relevante kampen og gir poeng
   function hentGjett (snapshotGjett){
     let gjett = snapshotGjett.val();
     let gjettKey = snapshotGjett.key;
-
+    let brukerRef = database.ref("brukere/"+gjett.bruker);
+    let kampRef = database.ref("kamper/"+gjett.kamp);
+    let poengFått=0;
+    brukerRef.once("value", function (snapshotBruker) {
+      brukerObjKey = snapshotBruker.key;
+      brukerObj = snapshotBruker.val();
+      console.log(brukerObj.brukernavn)
+    });
+    kampRef.once("value", function (snapshotKamp) {
+      kampObj = snapshotKamp.val();
+    });
+    if (gjett.vinner == kampObj.vinner){
+      brukerObj.poeng--;
+    }
+    if (gjett.lag1stilling == kampObj.lag1resultat && gjett.lag2stilling == kampObj.lag2resultat){
+      brukerObj.poeng--;
+    }
+    let brukerData = {
+      "poeng":brukerObj.poeng
+    };
+    let bruker = brukere.child(brukerObjKey);
+    bruker.update(brukerData);
   }
+  //De to neste funksjonene regner ut poengene til hver spiller. Poengene på bli satt til 0 hver gang for at man ikke skal få mer poeng hver gang koden kjøres
+  function regnUtPoeng(){
+    brukere.on("child_added", resetPoeng);
+    gjett.on("child_added", hentGjett);
+  }
+  function resetPoeng(snapshotreset) {
+    let brukerkey = snapshotreset.key;
+    let brukerData = {
+      "poeng":0
+    };
+    let bruker = brukere.child(brukerkey);
+    bruker.update(brukerData);
+  }
+  lag.on("child_added", hentLag);
+  kamper.on("child_added", hentkamper);
   brukere
     .orderByChild("poeng")
     .on("child_added", Leaderboard);
-  lag.on("child_added", hentLag);
-  kamper.on("child_added", hentkamper);
-  gjett.on("child_added", hentGjett);
 </script>
 </body>
 </html>

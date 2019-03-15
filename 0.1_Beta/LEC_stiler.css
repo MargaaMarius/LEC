@@ -59,9 +59,24 @@ header *{
 /* CSS for main */
 main{
   display:none;
-  width: 75%;
+  width: 100%;
   margin: 0 auto;
   text-align: center;
+  grid-template-columns: 1fr 60vw 1fr;
+  padding-top: 5vh;
+}
+main br{
+  grid-column: span 0;
+}
+main .innhold{
+  width: 80%;
+  margin: 0 auto;
+}
+main .gradient:first-child{
+  background-image: linear-gradient(to right, #040019, #00e4bf);
+}
+main .gradient:last-child{
+  background-image: linear-gradient(to left, #040019, #00e4bf);
 }
 main section{
   margin-bottom: 10vh;
@@ -74,16 +89,17 @@ main h1{
   font-size: 8em;
 }
 main #lag{
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-gap: 5vw;
-  margin: 0 2.5vw 10vh 2.5vw;
+  grid-gap: 2vw;
 }
 main #lag a{
   padding-top: 100%;
   position: relative;
   border-radius: 10%;
   background-color: #040019;
+  width: 100%;
 }
 main #lag img{
   width:80%;
@@ -103,19 +119,26 @@ main #admin{
   display: none;
 }
 main #admin div{
-  background-color: green;
+  background-color: #040019;
+}
+main #admin #matchregistration{
+  margin-bottom: 5vh;
 }
 main .kamp{
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   color: white;
   padding: 2vw;
+  border-radius: 2vw;
+  background-color: #040019;
 }
 main .kamp > div{
   padding-top: 100%;
   position: relative;
-  background-color: #040019;
   width: 100%;
+}
+main .kamp h2{
+  grid-column: span 3;
 }
 main .kamp > div:first-child{
   border-radius: 10% 0 0 0;
@@ -150,6 +173,22 @@ main .kamp form div:nth-child(4){
 }
 main .kamp form div:nth-child(6){
   border-radius: 0 0 10% 0;
+}
+main #leaderboard button{
+  background-color: #040019;
+  width: 40%;
+  min-height: 30px  ;
+  border-radius: 1vw;
+  color: white;
+  border: none;
+  margin-bottom: 5vh;
+}
+main table{
+  background-color: #040019;
+  color: white;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 2vw;
 }
 /* CSS for footer*/
 footer{
