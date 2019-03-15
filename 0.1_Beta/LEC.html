@@ -73,9 +73,10 @@
       </select></label>
       <button type="submit">Send inn</button>
     </form>
+    <h2>Legg inn resultater</h2>
   </section>
   <section id="kampListe">
-
+    <h2>Gjett kampresultater:</h2>
   </section>
   <section id="leaderboard">
     <table>
@@ -99,10 +100,11 @@
   let database = firebase.database();
   let brukere = database.ref("brukere");
   let bruker;
-  let brukerKey
+  let brukerKey;
   let lag = database.ref("lag");
   let kamper = database.ref("kamper");
   let admindel = document.querySelector("#admin");
+  let gjett = database.ref("gjett");
 
   // Funksjoner
   //Registrer en bruker og legger det til i en database
@@ -199,32 +201,26 @@
     let kampListe = document.querySelector("#kampListe");
     let kamp = snapshotKamper.val();
     let kampID = "runde" + kamp.runde + "kamp" + kamp.kampnummer;
-    let kampID1 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "L1";
-    let kampID2 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "L2";
-    let kampIDForm = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form";
-    let kampIDFormLag1 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form1";
-    let kampIDFormLag2 = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "form2";
-    let kampIDFormVinner = "runde" + kamp.runde + "kamp" + kamp.kampnummer + "vinner";
     let lagref1 = database.ref("lag/" + kamp.lag1);
     let lagref2 = database.ref("lag/" + kamp.lag2);
     kampListe.innerHTML += `
     <div class="kamp" id=${kampID}>
-      <div id=${kampID1}></div>
+      <div id=${kampID + "L1"}></div>
       <div>
         <h2>Mot</h2>
       </div>
-      <div id=${kampID2}></div>
-      <form id=${kampIDForm}>
-        <div><select id=${kampIDFormLag1}>
+      <div id=${kampID + "L2"}></div>
+      <form id=${kampID + "form"} onsubmit="registrerGjett(event)">
+        <div><select id=${kampID + "form1"}>
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
         </select></div>
-        <div><select id=${kampIDFormVinner}>
+        <div><select id=${kampID + "vinner"}>
           <option>Vinner</option>
         </select></div>
-        <div><select id=${kampIDFormLag2}>
+        <div><select id=${kampID + "form2"}>
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -238,22 +234,22 @@
     `;
     admindel.innerHTML += `
     <div class="kamp" id=${kampID + "a"}>
-      <div id=${kampID1 + "a"}></div>
+      <div id=${kampID + "L1" + "a"}></div>
       <div>
         <h2>Mot</h2>
       </div>
-      <div id=${kampID2 + "a"}></div>
-      <form id=${kampIDForm + "a"}>
-        <div><select id=${kampIDFormLag1 + "a"}>
+      <div id=${kampID+ "L2" + "a"}></div>
+      <form id=${kampID + "form" + "a"} onsubmit="registrerResultat(event)">
+        <div><select id=${kampID + "form1" + "a"}>
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
         </select></div>
-        <div><select id=${kampIDFormVinner + "a"}>
+        <div><select id=${kampID + "vinner" + "a"}>
           <option>Vinner</option>
         </select></div>
-        <div><select id=${kampIDFormLag2 + "a"}>
+        <div><select id=${kampID + "form2" + "a"}>
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -264,12 +260,13 @@
         <div></div>
       </form>
     </div>`;
-    let kampVinnerValg = document.querySelector("#" + kampIDFormVinner);
+    let kampVinnerValg = document.querySelector("#" + kampID + "vinner");
+    let kampVinnerValgadmin = document.querySelector("#"+kampID+"vinner"+"a");
     lagref1.once("value", function (snapshotLag1) {
       let lag1Key = snapshotLag1.key;
       let lag1 = snapshotLag1.val();
-      let lag1display = document.querySelector("#" + kampID1);
-      let lag1displayadmin = document.querySelector("#" + kampID1 + "a");
+      let lag1display = document.querySelector("#" + kampID +"L1");
+      let lag1displayadmin = document.querySelector("#" + kampID+"L1" + "a");
       lag1display.innerHTML += `
       <img src=${lag1.logo}>
       <h3>${lag1.navn}</h3>
@@ -279,24 +276,30 @@
       <img src=${lag1.logo}>
       <h3>${lag1.navn}</h3>
       `;
-      kampVinnerValg.innerHTML += `<option value=${lag1Key}>${lag1.navn}</option>`;
+      kampVinnerValgadmin.innerHTML += `<option value=${lag1Key}>${lag1.navn}</option>`;
     });
     lagref2.once("value", function (snapshotLag2) {
       let lag2Key = snapshotLag2.key;
       let lag2 = snapshotLag2.val();
-      let lag2display = document.querySelector("#" + kampID2);
+      let lag2display = document.querySelector("#" + kampID + "L2");
       lag2display.innerHTML += `
       <img src=${lag2.logo}>
       <h3>${lag2.navn}</h3>
       `;
       kampVinnerValg.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
-      let lag2displayadmin = document.querySelector("#" + kampID2 + "a");
+      let lag2displayadmin = document.querySelector("#" + kampID + "L2" + "a");
       lag2displayadmin.innerHTML += `
       <img src=${lag2.logo}>
       <h3>${lag2.navn}</h3>
       `;
-      kampVinnerValg.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
+      kampVinnerValgadmin.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
     });
+  }
+  function registrerGjett(event){
+    event.preventDefault();
+  }
+  function registrerResultat(event){
+    event.preventDefault();
   }
   brukere
     .orderByChild("poeng")
