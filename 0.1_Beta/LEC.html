@@ -61,15 +61,13 @@
       <label>Lag 2:<select id="adminInpLag2">
         <option value="TBD">TBD</option>
       </select></label>
-      <label>Runde:<select id="rundeInp">
-        <option value="1">Runde 1</option>
-        <option value="2">Runde 2</option>
-        <option value="3">Runde 3</option>
-        <option value="4">Finale</option>
-      </select></label>
-      <label>Kamp nummer:<select id="kampNrInp">
-        <option value="1">1</option>
-        <option value="2">2</option>
+      <label>Kamp:<select id="kampnummerregistrer">
+        <option value="Runde1Kamp1">Runde 1 Kamp 1</option>
+        <option value="Runde1Kamp2">Runde 1 Kamp 2</option>
+        <option value="Runde2Kamp1">Runde 2 Kamp 1</option>
+        <option value="Runde2Kamp2">Runde 2 Kamp 2</option>
+        <option value="Semifinale">Semifinale</option>
+        <option value="Finale">Finale</option>
       </select></label>
       <button type="submit">Send inn</button>
     </form>
@@ -99,8 +97,8 @@
 <script>
   let database = firebase.database();
   let brukere = database.ref("brukere");
-  let bruker;
-  let brukerKey;
+  let LoggetPåBruker;
+  let LoggetPåBrukerKey
   let lag = database.ref("lag");
   let kamper = database.ref("kamper");
   let admindel = document.querySelector("#admin");
@@ -129,8 +127,8 @@
   function hentBrukereLogIn(snapshotLogIn){
     let brukernavn = document.querySelector("#LogInBrukernavn");
     let passord = document.querySelector("#LogInPassord");
-    bruker = snapshotLogIn.val();
-    brukerKey = snapshotLogIn.key;
+    let bruker = snapshotLogIn.val();
+    let brukerKey = snapshotLogIn.key;
     if (brukernavn.value ==bruker.brukernavn && passord.value==bruker.passord){
       let loginscreen = document.querySelector("#login");
       let header = document.querySelector("header");
@@ -141,6 +139,9 @@
       header.style.display = "block";
       main.style.display = "grid";
       footer.style.display = "block";
+
+      LoggetPåBruker = snapshotLogIn.val();
+      LoggetPåBrukerKey = snapshotLogIn.key;
 
       if (bruker.admin){
         admindel.style.display = "block";
@@ -173,17 +174,18 @@
     event.preventDefault();
     let regiLag1 = document.querySelector("#adminInpLag1");
     let regiLag2 = document.querySelector("#adminInpLag2");
-    let regiRunde = document.querySelector("#rundeInp");
-    let regiKampNr = document.querySelector("#kampNrInp");
-    kamper.push({
+    let regiKamp = document.querySelector("#kampnummerregistrer");
+    let kampKey = regiKamp.value;
+    let kampData = {
       "lag1": regiLag1.value,
       "lag2": regiLag2.value,
-      "runde": regiRunde.value,
-      "kampnummer": regiKampNr.value,
+      "kampNR":regiKamp.value,
       "lag1resultat": "TBD",
       "lag2resultat": "TBD",
       "vinner": "TBD"
-    });
+    };
+    let kamp = kamper.child(kampKey);
+    kamp.set(kampData);
   }
   //Setter opp poenglisten. Siden Firebase bare sorterer i stigende rekkefølge, får man minuspoeng for å gjette riktig, men på nettsiden fjerner vi fortegnet, slik at en med -5 poeng i databasen har 5 poegn på nettsiden
   function Leaderboard(snapshotBrukere){
@@ -200,7 +202,7 @@
   function hentkamper(snapshotKamper) {
     let kampListe = document.querySelector("#kampListe");
     let kamp = snapshotKamper.val();
-    let kampID = "runde" + kamp.runde + "kamp" + kamp.kampnummer;
+    let kampID = kamp.kampNR;
     let lagref1 = database.ref("lag/" + kamp.lag1);
     let lagref2 = database.ref("lag/" + kamp.lag2);
     kampListe.innerHTML += `
@@ -210,7 +212,7 @@
         <h2>Mot</h2>
       </div>
       <div id=${kampID + "L2"}></div>
-      <form id=${kampID + "form"} onsubmit="registrerGjett(event)">
+      <form id=${kampID + "form"} onsubmit="registrerGjett(event,${kampID},${kampID + "form1"},${kampID + "form2"}, ${kampID + "vinner"})">
         <div><select id=${kampID + "form1"}>
           <option value="0">0</option>
           <option value="1">1</option>
@@ -233,13 +235,13 @@
     </div>
     `;
     admindel.innerHTML += `
-    <div class="kamp" id=${kampID + "a"}>
+    <div class="kamp" id=${kampID+ "a"}>
       <div id=${kampID + "L1" + "a"}></div>
       <div>
         <h2>Mot</h2>
       </div>
       <div id=${kampID+ "L2" + "a"}></div>
-      <form id=${kampID + "form" + "a"} onsubmit="registrerResultat(event)">
+      <form id=${kampID + "form" + "a"} onsubmit="registrerResultat(event,${kampID},${kampID + "form1"+"a"},${kampID + "form2"+"a"}, ${kampID + "vinner"+"a"})">
         <div><select id=${kampID + "form1" + "a"}>
           <option value="0">0</option>
           <option value="1">1</option>
@@ -295,17 +297,45 @@
       kampVinnerValgadmin.innerHTML += `<option value=${lag2Key}>${lag2.navn}</option>`;
     });
   }
-  function registrerGjett(event){
+  //Lar brukere registrere gjettne sine
+  function registrerGjett(event, kampGjett, lag1stilling, lag2stilling, vinner) {
     event.preventDefault();
+    let gjettKey = LoggetPåBrukerKey+kampGjett.id;
+    console.log(LoggetPåBruker.brukernavn);
+    let gjettData = {
+      "vinner": vinner.value,
+      "lag1stilling":lag1stilling.value,
+      "lag2stilling":lag2stilling.value,
+      "bruker":LoggetPåBrukerKey,
+      "kamp":kampGjett.id
+    };
+    let Gjett = gjett.child(gjettKey);
+    Gjett.set(gjettData);
   }
-  function registrerResultat(event){
+  //Lar admin registrere resultatet til en kamp etter at den er ferdig
+  function registrerResultat(event, kampResultat, lag1stillig, lag2stilling, vinner){
     event.preventDefault();
+    let resultatKey = kampResultat.id;
+    let resultatData = {
+      "vinner": vinner.value,
+      "lag1resultat": lag1stillig.value,
+      "lag2resultat": lag2stilling.value
+    };
+    let resultat = kamper.child(resultatKey);
+    resultat.update(resultatData);
+  }
+  //Ser på alle gjettene, sammenlikner dem med resultatet i den relevante kampen og gir poeng
+  function hentGjett (snapshotGjett){
+    let gjett = snapshotGjett.val();
+    let gjettKey = snapshotGjett.key;
+
   }
   brukere
     .orderByChild("poeng")
     .on("child_added", Leaderboard);
   lag.on("child_added", hentLag);
   kamper.on("child_added", hentkamper);
+  gjett.on("child_added", hentGjett);
 </script>
 </body>
 </html>
