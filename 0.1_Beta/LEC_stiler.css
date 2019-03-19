@@ -8,6 +8,9 @@ body{
   background-color: #00e4bf;
   color: #040019;
 }
+.admin{
+  display: none;
+}
 /* CSS for login-siden */
 #login {
   display: grid;
@@ -174,6 +177,15 @@ main .kamp form div:nth-child(4){
 main .kamp form div:nth-child(6){
   border-radius: 0 0 10% 0;
 }
+main .kamp form button{
+  background-color: #00e4bf;
+  border-radius: 1vw;
+  min-height: 2vh;
+  border: none;
+}
+main .kamp form button:active{
+  background-color: whitesmoke;
+}
 main #leaderboard button{
   background-color: #040019;
   width: 40%;
@@ -182,6 +194,9 @@ main #leaderboard button{
   color: white;
   border: none;
   margin-bottom: 5vh;
+}
+main #leaderboard button:active{
+  background-color: #00b48f;
 }
 main table{
   background-color: #040019;

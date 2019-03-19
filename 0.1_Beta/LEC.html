@@ -48,10 +48,11 @@
     <h1 id="title">LEC</h1>
   </section>
   <section id="lag">
-
+  <!-- Her vises lagene i ligaen, de hentes fra databasen-->
   </section>
   <!-- Denne seksjonen kan bare brukeren som er admin se -->
   <section id="admin">
+    <!-- Her setter admin opp en kamp. Han velger hvem som spiller og hvilken kamp det er-->
     <h2>Sett opp en kamp:</h2>
     <form id="matchregistration" onsubmit="registrerMatch(event)">
       <label>Lag 1:<select id="adminInpLag1">
@@ -71,6 +72,7 @@
       <button type="submit">Send inn</button>
     </form>
     <h2>Legg inn resultater</h2>
+    <!-- Her legger admin inn resultatene etter at kampen er ferdig -->
   </section>
   <section id="kampListe">
     <h2>Gjett kampresultater:</h2>
@@ -147,13 +149,18 @@
       LoggetPåBruker = snapshotLogIn.val();
       LoggetPåBrukerKey = snapshotLogIn.key;
 
-      if (bruker.admin){
-        admindel.style.display = "block";
-      }
-
       header.innerHTML += `
       <p>${brukernavn.value}</p><p>${-bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
       `;
+      if (bruker.admin){
+        //gjør elementer som bare skal være synlige for admin synlige. Ellers er de på display = "none"
+        admindel.style.display = "block";
+        let adminting = document.querySelectorAll(".admin");
+        let AntallKamper = adminting.length;
+        for (i=0; i<AntallKamper; i++){
+          adminting[i].style.display = "block";
+        }
+      }
     }
   }
   //Henter lagenes logo til delen under overskriften, og legger til alle lagene som valgmuligheter i select-elementet der adminen legger til en kamp
@@ -186,7 +193,9 @@
       "kampNR":regiKamp.value,
       "lag1resultat": "TBD",
       "lag2resultat": "TBD",
-      "vinner": "TBD"
+      "vinner": "TBD",
+      "tilgjengelig":true,
+      "ferdig":false
     };
     let kamp = kamper.child(kampKey);
     kamp.set(kampData);
@@ -209,7 +218,7 @@
     let kampID = kamp.kampNR;
     let lagref1 = database.ref("lag/" + kamp.lag1);
     let lagref2 = database.ref("lag/" + kamp.lag2);
-    kampListe.innerHTML += `
+      kampListe.innerHTML += `
     <div class="kamp" id=${kampID}>
     <h2>${kampID}</h2>
       <div id=${kampID + "L1"}></div>
@@ -236,10 +245,19 @@
         <div></div>
         <button type="submit">Send inn</button>
         <div></div>
+        <div></div>
+        <button class="admin" onclick="gjørUtilgjenglig(${kampID})">Gjør utilgjengelig</button>
+        <div></div>
       </form>
     </div>
     `;
-    admindel.innerHTML += `
+      //Skjuler kampen dersom admin har gjort den utilgjengelig. Likevel kan en bruker legge inn gjett, så lenge de ikke reloader siden. Har kode som motvirker dette lenger ned
+      if (!kamp.tilgjengelig){
+        let kampdiv = document.querySelector("#"+kampID);
+        kampdiv.style.display = "none";
+
+      }
+      admindel.innerHTML += `
     <div class="kamp" id=${kampID+ "a"}>
     <h2>${kampID}</h2>
       <div id=${kampID + "L1" + "a"}></div>
@@ -307,7 +325,6 @@
   function registrerGjett(event, kampGjett, lag1stilling, lag2stilling, vinner) {
     event.preventDefault();
     let gjettKey = LoggetPåBrukerKey+kampGjett.id;
-    console.log(LoggetPåBruker.brukernavn);
     let gjettData = {
       "vinner": vinner.value,
       "lag1stilling":lag1stilling.value,
@@ -317,7 +334,16 @@
       "poeng":0
     };
     let Gjett = gjett.child(gjettKey);
-    Gjett.set(gjettData);
+    //Dette gjør at brukere ikke kan legge inn gjett etter at admin har gjort kampen utilgjengelig
+    let kampRef = database.ref("kamper/"+ kampGjett.id);
+    kampRef.once("value", function(snapshotKamp2){
+      let kampObj = snapshotKamp2.val();
+      console.log(kampGjett.id);
+      if (kampObj.tilgjengelig){
+        Gjett.set(gjettData);
+      }
+    });
+
   }
   //Lar admin registrere resultatet til en kamp etter at den er ferdig
   function registrerResultat(event, kampResultat, lag1stillig, lag2stilling, vinner){
@@ -342,7 +368,6 @@
     brukerRef.once("value", function (snapshotBruker) {
       brukerObjKey = snapshotBruker.key;
       brukerObj = snapshotBruker.val();
-      console.log(brukerObj.brukernavn)
     });
     kampRef.once("value", function (snapshotKamp) {
       kampObj = snapshotKamp.val();
@@ -372,6 +397,22 @@
     let bruker = brukere.child(brukerkey);
     bruker.update(brukerData);
   }
+  function gjørUtilgjenglig(kampID){
+    kamper
+      .orderByChild("kampNR")
+      .equalTo(kampID.id)
+      .on("child_added", gjørUtilgjenglig2)
+  }
+  function gjørUtilgjenglig2(snapshotKamp2) {
+    let kamp = snapshotKamp2.val();
+    let kampObj = kamper.child(kamp.kampNR);
+    let kampData = {
+      "tilgjengelig":false
+    };
+    kampObj.update(kampData);
+  }
+
+  //lytterfunksjoner som ikke er inne i andre funksjoner
   lag.on("child_added", hentLag);
   kamper.on("child_added", hentkamper);
   brukere
@@ -380,3 +421,5 @@
 </script>
 </body>
 </html>
+
+// bruk display none på utilgjengelige kamper
