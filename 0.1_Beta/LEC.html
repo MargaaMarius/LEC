@@ -255,7 +255,6 @@
       if (!kamp.tilgjengelig){
         let kampdiv = document.querySelector("#"+kampID);
         kampdiv.style.display = "none";
-
       }
       admindel.innerHTML += `
     <div class="kamp" id=${kampID+ "a"}>
@@ -286,6 +285,10 @@
         <div></div>
       </form>
     </div>`;
+    if (kamp.ferdig){
+      let kampdiv = document.querySelector("#"+kampID+"a");
+      kampdiv.style.display = "none";
+    }
     let kampVinnerValg = document.querySelector("#" + kampID + "vinner");
     let kampVinnerValgadmin = document.querySelector("#"+kampID+"vinner"+"a");
     lagref1.once("value", function (snapshotLag1) {
@@ -343,7 +346,6 @@
         Gjett.set(gjettData);
       }
     });
-
   }
   //Lar admin registrere resultatet til en kamp etter at den er ferdig
   function registrerResultat(event, kampResultat, lag1stillig, lag2stilling, vinner){
@@ -356,8 +358,15 @@
     };
     let resultat = kamper.child(resultatKey);
     resultat.update(resultatData);
+    let kampRef = database.ref("kamper/"+kampResultat.id);
+    let kampData = {
+      "ferdig": true
+    };
+    kampRef.once("value", function (snapshotFerdig) {
+      let kamp = snapshotFerdig.val();
+      kamp.update(kampData);
+    })
   }
-
   //Ser på alle gjettene, sammenlikner dem med resultatet i den relevante kampen og gir poeng
   function hentGjett (snapshotGjett){
     let gjett = snapshotGjett.val();
@@ -411,7 +420,6 @@
     };
     kampObj.update(kampData);
   }
-
   //lytterfunksjoner som ikke er inne i andre funksjoner
   lag.on("child_added", hentLag);
   kamper.on("child_added", hentkamper);
@@ -421,5 +429,3 @@
 </script>
 </body>
 </html>
-
-// bruk display none på utilgjengelige kamper
