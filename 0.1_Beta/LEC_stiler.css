@@ -134,6 +134,7 @@ main .kamp{
   padding: 2vw;
   border-radius: 2vw;
   background-color: #040019;
+  margin-bottom: 5vh;
 }
 main .kamp > div{
   padding-top: 100%;
@@ -182,6 +183,7 @@ main .kamp form button{
   border-radius: 1vw;
   min-height: 2vh;
   border: none;
+  margin-top: 1vh;
 }
 main .kamp form button:active{
   background-color: whitesmoke;
