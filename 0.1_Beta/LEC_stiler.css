@@ -215,6 +215,25 @@ main #kampLogg{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
 }
+main .visGjett{
+  background-color: #040019;
+  color: white;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+  border-bottom: white solid 0.1vh;
+}
+main .visGjett:last-child{
+  border-bottom: none;
+}
+main .visGjett div{
+  width: 20vw;
+}
+main .visGjett img{
+  width: 50%;
+
+}
 /* CSS for footer*/
 footer{
   display:none;

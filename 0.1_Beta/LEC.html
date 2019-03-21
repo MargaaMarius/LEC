@@ -471,6 +471,7 @@
     };
     kampObj.update(kampData);
   }
+  //Viser hva brukeren har gjettet
   function hentGjett2(snapshotGjett){
     let gjett = snapshotGjett.val();
     let brukerRef = database.ref("brukere/"+gjett.bruker);
@@ -495,8 +496,11 @@
       console.log(lag1Obj);
       let mineKamper = document.querySelector("#brukerKamper");
       mineKamper.innerHTML += `
-      <div>
-        <div>${lag1Obj.navn}</div><div><img src="${lag2Obj.logo}"</div><div>${gjett.lag1stilling}</div><div>${gjett.lag2stilling}</div>
+      <div class="visGjett">
+        <div><img src="${lag1Obj.logo}"></div>
+        <div><img src="${lag2Obj.logo}"></div>
+        <div>${gjett.lag1stilling}</div>
+        <div>${gjett.lag2stilling}</div>
       </div>
       `;
     }
