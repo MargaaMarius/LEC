@@ -43,6 +43,11 @@ body{
   grid-column: span 2;
   margin: 0 auto;
 }
+#login #feilmelding{
+  color: red;
+  display: none;
+  margin: 50px;
+}
 /* CSS for header */
 header{
   display:none;

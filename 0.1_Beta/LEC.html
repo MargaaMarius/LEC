@@ -37,6 +37,7 @@
     <input type="password" required id="registrerPassord" placeholder="Passord">
     <button type="submit">Opprett bruker</button>
   </form>
+  <p id="feilmelding">Feil brukernavn/passord</p>
 </div>
 <header>
 </header>
@@ -136,6 +137,8 @@
     let bruker = snapshotLogIn.val();
     let brukerKey = snapshotLogIn.key;
     if (brukernavn.value ==bruker.brukernavn && passord.value==bruker.passord){
+
+      //Når man logger på, blir noen elementer usynlige og andre synlige
       let loginscreen = document.querySelector("#login");
       let header = document.querySelector("header");
       let main = document.querySelector("main");
@@ -149,6 +152,7 @@
       LoggetPåBruker = snapshotLogIn.val();
       LoggetPåBrukerKey = snapshotLogIn.key;
 
+      //Viser brukernavn, poeng og logg-ut-knapp i header
       header.innerHTML += `
       <p>${brukernavn.value}</p><p>${-bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
       `;
@@ -161,6 +165,10 @@
           adminting[i].style.display = "block";
         }
       }
+    }else{
+      //gir feilmelding dersom brukernavn og passord ikke passer sammen
+      let feilmelding = document.querySelector("#feilmelding");
+      feilmelding.style.display = "block";
     }
   }
   //Henter lagenes logo til delen under overskriften, og legger til alle lagene som valgmuligheter i select-elementet der adminen legger til en kamp
@@ -406,11 +414,12 @@
     let bruker = brukere.child(brukerkey);
     bruker.update(brukerData);
   }
+  //Disse to gjør kampene utilgjengelige når admin sier det. Det er for at man ikke skal kunne legge inn hvordan man tror kampene går mens de er i gang. Disse funksjonene endrer bare verdien "tilgjengelig" i databasen. I funksjonen hentkamper brukes denne verdien til å bestemme om kampen skal være synlig eller ikke
   function gjørUtilgjenglig(kampID){
     kamper
       .orderByChild("kampNR")
       .equalTo(kampID.id)
-      .on("child_added", gjørUtilgjenglig2)
+      .on("child_added", gjørUtilgjenglig2);
   }
   function gjørUtilgjenglig2(snapshotKamp2) {
     let kamp = snapshotKamp2.val();
