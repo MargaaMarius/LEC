@@ -37,7 +37,8 @@
     <input type="password" required id="registrerPassord" placeholder="Passord">
     <button type="submit">Opprett bruker</button>
   </form>
-  <p id="feilmelding">Feil brukernavn/passord</p>
+  <p class="feilmelding">Feil brukernavn/passord</p>
+  <p class="feilmelding">Brukernavnet eksisterer allerede</p>
 </div>
 <header>
 </header>
@@ -91,9 +92,15 @@
     </table>
   </section>
   <section id="kampLogg">
-    <div id="brukerKamper"></div>
-    <div id="matchHistory"></div>
+    <div id="brukerKamper">
+      <h2>Dine kamper</h2>
+    </div>
+    <div id="matchHistory">
+      <h2>Resultater</h2>
+    </div>
   </section>
+    <br>
+    <br>
 </div>
   <div class="gradient"></div>
 </main>
@@ -104,7 +111,7 @@
   let database = firebase.database();
   let brukere = database.ref("brukere");
   let LoggetPåBruker;
-  let LoggetPåBrukerKey
+  let LoggetPåBrukerKey;
   let lag = database.ref("lag");
   let kamper = database.ref("kamper");
   let admindel = document.querySelector("#admin");
@@ -113,19 +120,31 @@
   let kampObj;
 
   // Funksjoner
-  //Registrer en bruker og legger det til i en database
+  //Registrer en bruker og legger det til i en database. Hindrer at en bruker opprettes dersom det allerede eksisterer en bruker med samme brukernavn
   function registrerBruker(event){
     event.preventDefault();
     let brukernavnRegistrer = document.querySelector("#registrerBrukernavn");
     let passordRegistrer = document.querySelector("#registrerPassord");
     let registrerSkjema = document.querySelector("#registrerForm");
-    brukere.push({
-      "brukernavn":brukernavnRegistrer.value,
-      "passord":passordRegistrer.value,
-      "admin":false,
-      "poeng":0
+    let BrukerFinnes = false;
+    brukere.on("child_added", function (snapshotBrukerFinnes) {
+      let bruker = snapshotBrukerFinnes.val();
+      if (brukernavnRegistrer.value==bruker.brukernavn){
+        BrukerFinnes = true;
+      }
     });
-    registrerSkjema.reset();
+    if (!BrukerFinnes){
+      brukere.push({
+        "brukernavn":brukernavnRegistrer.value,
+        "passord":passordRegistrer.value,
+        "admin":false,
+        "poeng":0
+      });
+      registrerSkjema.reset();
+    }else{
+      let feilmelding = document.querySelectorAll(".feilmelding");
+      feilmelding[1].style.color = "red";
+    }
   }
   //De to neste funksjonene logger deg inn, og ordner slik at login siden forsvinner og resten kommer til syne
   function LogIn(event){
@@ -153,6 +172,9 @@
       LoggetPåBruker = snapshotLogIn.val();
       LoggetPåBrukerKey = snapshotLogIn.key;
 
+      //En funksjon som ikke kan kjøres før etter at man har logget på. Viser hva brukeren har gjettet
+      gjett.on ("child_added", hentGjett2);
+
       //Viser brukernavn, poeng og logg-ut-knapp i header
       header.innerHTML += `
       <p>${brukernavn.value}</p><p>${-bruker.poeng} poeng</p><button onclick="location.reload()">Logg ut</button>
@@ -168,8 +190,8 @@
       }
     }else{
       //gir feilmelding dersom brukernavn og passord ikke passer sammen
-      let feilmelding = document.querySelector("#feilmelding");
-      feilmelding.style.display = "block";
+      let feilmelding = document.querySelectorAll(".feilmelding");
+      feilmelding[0].style.color = "red";
     }
   }
   //Henter lagenes logo til delen under overskriften, og legger til alle lagene som valgmuligheter i select-elementet der adminen legger til en kamp
@@ -382,6 +404,8 @@
     let gjettKey = snapshotGjett.key;
     let brukerRef = database.ref("brukere/"+gjett.bruker);
     let kampRef = database.ref("kamper/"+gjett.kamp);
+    let lagObj1;
+    let lagObj2;
     let poengFått=0;
     brukerRef.once("value", function (snapshotBruker) {
       brukerObjKey = snapshotBruker.key;
@@ -389,6 +413,14 @@
     });
     kampRef.once("value", function (snapshotKamp) {
       kampObj = snapshotKamp.val();
+    });
+    let lagRef1 = database.ref("lag/"+kampObj.lag1);
+    let lagRef2 = database.ref("lag/"+kampObj.lag2);
+    lagRef1.once("value", function (snapshotLag1){
+      lagObj1 = snapshotLag1.val();
+    });
+    lagRef2.once("value", function (snapshotLag2){
+      lagObj2 = snapshotLag2.val();
     });
     if (gjett.vinner == kampObj.vinner){
       brukerObj.poeng--;
@@ -401,6 +433,15 @@
     };
     let bruker = brukere.child(brukerObjKey);
     bruker.update(brukerData);
+    console.log(gjett.bruker);
+    if (gjett.bruker == LoggetPåBrukerKey){
+      let mineKamper = document.querySelector("#brukerKamper");
+      mineKamper.innerHTML += `
+      <div>
+        <div><img src="${lagObj1.logo}"></div><div><img src="${lagObj2.logo}"</div><div>${gjett.lag1stilling}</div><div>${gjett.lag2stilling}</div>
+      </div>
+      `;
+    }
   }
   //De to neste funksjonene regner ut poengene til hver spiller. Poengene på bli satt til 0 hver gang for at man ikke skal få mer poeng hver gang koden kjøres
   function regnUtPoeng(){
@@ -429,6 +470,38 @@
       "tilgjengelig":false
     };
     kampObj.update(kampData);
+  }
+  function hentGjett2(snapshotGjett){
+    let gjett = snapshotGjett.val();
+    let brukerRef = database.ref("brukere/"+gjett.bruker);
+    let kampRef = database.ref("kamper/"+gjett.kamp);
+    let brukerObj;
+    let kampObj;
+    let lagObj1;
+    let lagObj2;
+    brukerRef.once("value", function (snapshotBrukere){
+      brukerObj = snapshotBrukere.val();
+    });
+    kampRef.once("value", function(snapshotKamper) {
+      kampObj = snapshotKamper.val();
+    });
+    lag1Ref = database.ref("lag/"+kampObj.lag1);
+    lag2Ref = database.ref("lag/"+kampObj.lag2);
+    lag1Ref.once("value", function(snapshotLag1){
+      lag1Obj = snapshotLag1.val();
+    });
+    lag2Ref.once("value", function(snapshotLag2){
+      lag2Obj = snapshotLag2.val();
+    });
+    if (gjett.bruker == LoggetPåBrukerKey) {
+      console.log(lag1Obj);
+      let mineKamper = document.querySelector("#brukerKamper");
+      mineKamper.innerHTML += `
+      <div>
+        <div>${lag1Obj.navn}</div><div><img src="${lag2Obj.logo}"</div><div>${gjett.lag1stilling}</div><div>${gjett.lag2stilling}</div>
+      </div>
+      `;
+    }
   }
   //lytterfunksjoner som ikke er inne i andre funksjoner
   lag.on("child_added", hentLag);

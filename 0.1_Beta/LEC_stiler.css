@@ -43,9 +43,8 @@ body{
   grid-column: span 2;
   margin: 0 auto;
 }
-#login #feilmelding{
-  color: red;
-  display: none;
+#login .feilmelding{
+  color: #00e4bf;
   margin: 50px;
 }
 /* CSS for header */
@@ -211,6 +210,10 @@ main table{
   width: 80%;
   margin: 0 auto;
   border-radius: 2vw;
+}
+main #kampLogg{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 /* CSS for footer*/
 footer{
