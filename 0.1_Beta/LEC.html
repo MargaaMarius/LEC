@@ -477,8 +477,6 @@
     let kampRef = database.ref("kamper/"+gjett.kamp);
     let brukerObj;
     let kampObj;
-    let lagObj1;
-    let lagObj2;
     brukerRef.once("value", function (snapshotBrukere){
       brukerObj = snapshotBrukere.val();
     });
