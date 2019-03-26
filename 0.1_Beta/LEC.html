@@ -236,13 +236,24 @@
   //Setter opp poenglisten. Siden Firebase bare sorterer i stigende rekkefølge, får man minuspoeng for å gjette riktig, men på nettsiden fjerner vi fortegnet, slik at en med -5 poeng i databasen har 5 poegn på nettsiden
   function Leaderboard(snapshotBrukere){
     let brukerL = snapshotBrukere.val();
+    let brukerLKey = snapshotBrukere.key;
     let tabell = document.querySelector("tbody");
-    tabell.innerHTML += `
-    <tr>
+    let brukerPoengDisplay = document.querySelectorAll(".tabell"+brukerLKey);
+    let brukerPoengDisplayAntall = brukerPoengDisplay.length;
+    if (brukerPoengDisplayAntall==0){
+      tabell.innerHTML += `
+    <tr class="tabell${brukerLKey}">
       <td>${-brukerL.poeng}</td>
       <td>${brukerL.brukernavn}</td>
     </tr>
     `;
+    }else{
+      let brukerPoengDisplayOppdater = document.querySelector(".tabell"+brukerLKey);
+      brukerPoengDisplayOppdater.innerHTML = `
+        <td>${-brukerL.poeng}</td>
+        <td>${brukerL.brukernavn}</td>
+      `;
+    }
   }
   //Når adminen har lagt inn en kamp, lages et element som er tilgjengelig for alle. Dette viser hvem som spiller kampen og lar brukeren gjette vinneren og stillingen. Hver kamp er best av 5, så det er unødvendig med verdier høyere enn 3 når man skal gjette stillingen. Derfor har jeg brukt select istedet for input type="number". I tillegg lages et element som bare admin kan se. Her kan man legge inn resultatene til kampen
   function hentkamper(snapshotKamper) {
@@ -398,10 +409,12 @@
     let kampData = {
       "ferdig": true
     };
-    kampRef.once("value", function (snapshotFerdig) {
-      let kamp = snapshotFerdig.val();
-      kamp.update(kampData);
-    })
+    let kampObj2 = kamper.child(kampResultat.id);
+    kampObj2.update(kampData);
+    kamper
+      .orderByChild("ferdig")
+      .equalTo(true)
+      .on("child_added", visKampHistorie);
   }
   //Ser på alle gjettene, sammenlikner dem med resultatet i den relevante kampen og gir poeng
   function hentGjett (snapshotGjett){
@@ -443,6 +456,13 @@
   function regnUtPoeng(){
     brukere.on("child_added", resetPoeng);
     gjett.on("child_added", hentGjett);
+    let tabell = document.querySelector("tbody");
+    tabell.innerHTML =`
+
+    `;
+    brukere
+      .orderByChild("poeng")
+      .on("child_added", Leaderboard)
   }
   function resetPoeng(snapshotreset) {
     let brukerkey = snapshotreset.key;
@@ -529,9 +549,61 @@
       `;
     }
   }
+  function visKampHistorie(snapshotFerdigeKamper){
+    let ferdigKamp = snapshotFerdigeKamper.val();
+    let ferdigKampKey = snapshotFerdigeKamper.key;
+    let kampDisplay = document.querySelector("#matchHistory");
+    let lag1Ref = database.ref("lag/" + ferdigKamp.lag1);
+    let lag2Ref = database.ref("lag/" + ferdigKamp.lag2);
+    lag1Ref.once("value", function(snapshotLag1){
+      lag1Obj = snapshotLag1.val();
+    });
+    lag2Ref.once("value", function(snapshotLag2){
+      lag2Obj = snapshotLag2.val();
+    });
+    let kampId = document.querySelectorAll("."+ferdigKampKey);
+    let antallKamper = kampId.length;
+    if (antallKamper==0){
+      kampDisplay.innerHTML +=`
+    <div class="visKamp">
+      <div class="${ferdigKampKey}">
+        <div><img src="${lag1Obj.logo}"></div>
+        <div><img src="${lag2Obj.logo}"></div>
+        <div>${ferdigKamp.lag1resultat}</div>
+        <div>${ferdigKamp.lag2resultat}</div>
+        <div id="vantlag1${ferdigKampKey}R"></div>
+        <div id="vantlag2${ferdigKampKey}R"></div>
+      </div>
+    </div>
+    `;
+    }else{
+      let kampOppdatering = document.querySelector("."+ferdigKampKey);
+      kampOppdatering.innerHTML =`
+        <div><img src="${lag1Obj.logo}"></div>
+        <div><img src="${lag2Obj.logo}"></div>
+        <div>${ferdigKamp.lag1resultat}</div>
+        <div>${ferdigKamp.lag2resultat}</div>
+        <div id="vantlag1${ferdigKampKey}R"></div>
+        <div id="vantlag2${ferdigKampKey}R"></div>
+      `;
+    }
+    let vinnerdiv;
+    if (ferdigKamp.vinner == ferdigKamp.lag1){
+      vinnerdiv = document.querySelector("#vantlag1"+ferdigKampKey+"R");
+    }else{
+      vinnerdiv = document.querySelector("#vantlag2"+ferdigKampKey+"R");
+    }
+    vinnerdiv.innerHTML = `
+      Vinner
+      `;
+  }
   //lytterfunksjoner som ikke er inne i andre funksjoner
   lag.on("child_added", hentLag);
   kamper.on("child_added", hentkamper);
+  kamper
+    .orderByChild("ferdig")
+    .equalTo(true)
+    .on("child_added", visKampHistorie);
   brukere
     .orderByChild("poeng")
     .on("child_added", Leaderboard);

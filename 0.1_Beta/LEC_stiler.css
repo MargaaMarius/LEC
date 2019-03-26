@@ -214,9 +214,38 @@ main table{
 main #kampLogg{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-gap: 5vw;
 }
-main #brukerKamper{
-  margin-right: 5vw;
+main .visKamp{
+  width: 100%;
+  background-color: #040019;
+  color: white;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+  border-bottom: white solid 0.1vh;
+}
+main .visKamp:nth-child(2){
+  border-top-left-radius: 5vw;
+  border-top-right-radius: 5vw;
+}
+main .visKamp:last-child{
+  border-bottom-left-radius: 5vw;
+  border-bottom-right-radius: 5vw;
+}
+main .visKamp > div{
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+main .visKamp:last-child{
+  border-bottom: none;
+}
+main .visKamp div div{
+  width: 10vw;
+}
+main .visKamp img{
+  width: 50%;
+
 }
 main .visGjett{
   width: 100%;
@@ -243,7 +272,7 @@ main .visGjett:last-child{
   border-bottom: none;
 }
 main .visGjett div div{
-  width: 20vw;
+  width: 10vw;
 }
 main .visGjett img{
   width: 50%;
