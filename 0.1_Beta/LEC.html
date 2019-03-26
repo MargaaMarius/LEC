@@ -118,6 +118,8 @@
   let gjett = database.ref("gjett");
   let brukerObj;
   let kampObj;
+  let kampIdAntall;
+
 
   // Funksjoner
   //Registrer en bruker og legger det til i en database. Hindrer at en bruker opprettes dersom det allerede eksisterer en bruker med samme brukernavn
@@ -173,7 +175,7 @@
       LoggetPåBrukerKey = snapshotLogIn.key;
 
       //En funksjon som ikke kan kjøres før etter at man har logget på. Viser hva brukeren har gjettet
-      gjett.on ("child_added", hentGjett2);
+      gjett.on("child_added", hentGjett2);
 
       //Viser brukernavn, poeng og logg-ut-knapp i header
       header.innerHTML += `
@@ -372,9 +374,12 @@
     let kampRef = database.ref("kamper/"+ kampGjett.id);
     kampRef.once("value", function(snapshotKamp2){
       let kampObj = snapshotKamp2.val();
-      console.log(kampGjett.id);
       if (kampObj.tilgjengelig){
         Gjett.set(gjettData);
+        gjett
+          .orderByChild("kamp")
+          .equalTo(kampGjett.id)
+          .on("child_added", hentGjett2);
       }
     });
   }
@@ -433,15 +438,6 @@
     };
     let bruker = brukere.child(brukerObjKey);
     bruker.update(brukerData);
-    console.log(gjett.bruker);
-    if (gjett.bruker == LoggetPåBrukerKey){
-      let mineKamper = document.querySelector("#brukerKamper");
-      mineKamper.innerHTML += `
-      <div>
-        <div><img src="${lagObj1.logo}"></div><div><img src="${lagObj2.logo}"</div><div>${gjett.lag1stilling}</div><div>${gjett.lag2stilling}</div>
-      </div>
-      `;
-    }
   }
   //De to neste funksjonene regner ut poengene til hver spiller. Poengene på bli satt til 0 hver gang for at man ikke skal få mer poeng hver gang koden kjøres
   function regnUtPoeng(){
@@ -474,6 +470,7 @@
   //Viser hva brukeren har gjettet
   function hentGjett2(snapshotGjett){
     let gjett = snapshotGjett.val();
+    let gjettKey = snapshotGjett.key;
     let brukerRef = database.ref("brukere/"+gjett.bruker);
     let kampRef = database.ref("kamper/"+gjett.kamp);
     let brukerObj;
@@ -493,15 +490,42 @@
       lag2Obj = snapshotLag2.val();
     });
     if (gjett.bruker == LoggetPåBrukerKey) {
-      console.log(lag1Obj);
       let mineKamper = document.querySelector("#brukerKamper");
-      mineKamper.innerHTML += `
+      let kampId = document.querySelectorAll("." + gjettKey);
+      kampIdAntall = kampId.length;
+      // if er nødvendig for at listen oppdaterer seg når man oppdaterer et gjett. Uten den lages bare et nytt element, slik at både det gamle og nye gjettet vises. Her finner koden ut om gjetttet allerede vises, og hvis det gjør det, endres innerHTML, istedet for å legge til et nytt element
+      if (kampIdAntall == 0){
+        mineKamper.innerHTML += `
       <div class="visGjett">
-        <div><img src="${lag1Obj.logo}"></div>
-        <div><img src="${lag2Obj.logo}"></div>
-        <div>${gjett.lag1stilling}</div>
-        <div>${gjett.lag2stilling}</div>
+        <div class="${gjettKey}">
+          <div><img src="${lag1Obj.logo}"></div>
+          <div><img src="${lag2Obj.logo}"></div>
+          <div>${gjett.lag1stilling}</div>
+          <div>${gjett.lag2stilling}</div>
+          <div id="vantlag1${gjett.kamp}"></div>
+          <div id="vantlag2${gjett.kamp}"></div>
+        </div>
       </div>
+      `;
+      }else{
+        let kampVis = document.querySelector("." + gjettKey);
+        kampVis.innerHTML = `
+          <div><img src="${lag1Obj.logo}"></div>
+          <div><img src="${lag2Obj.logo}"></div>
+          <div>${gjett.lag1stilling}</div>
+          <div>${gjett.lag2stilling}</div>
+          <div id="vantlag1${gjett.kamp}"></div>
+          <div id="vantlag2${gjett.kamp}"></div>
+        `;
+      }
+      let vinnerdiv;
+      if (gjett.vinner == kampObj.lag1){
+        vinnerdiv = document.querySelector("#vantlag1"+gjett.kamp);
+      }else{
+        vinnerdiv = document.querySelector("#vantlag2"+gjett.kamp);
+      }
+      vinnerdiv.innerHTML = `
+      Vinner
       `;
     }
   }
