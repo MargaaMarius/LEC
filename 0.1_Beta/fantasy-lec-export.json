@@ -1,0 +1,313 @@
+// Dette er en kopi av Firebase-databasen, kopiert 21:04 26.03.2019. Den kommer til å endre seg, siden det er flere kamper som skal legges inn, når jeg vet hvilke lag som kal spille i dem, og brukere gjetter resultatett på senere kamper. I tillegg endres noen verdier, som "ferdig" og "tilgjengelig" i kamper, fordi det er viktig å vise at kampene er i gang eller ferdige
+{
+  "brukere" : {
+    "-L_kxe9o2-ICYx3gXTN1" : {
+      "admin" : true,
+      "brukernavn" : "MargaaMarius",
+      "passord" : "123",
+      "poeng" : 0
+    },
+    "-L_kzzbiE0J73S3noYQn" : {
+      "admin" : false,
+      "brukernavn" : "Mriceluver",
+      "passord" : "1234",
+      "poeng" : 0
+    },
+    "-L_rGoHKMtTkFiPGHJDY" : {
+      "admin" : false,
+      "brukernavn" : "Maioxex",
+      "passord" : "Pusen",
+      "poeng" : 0
+    },
+    "-L_w27MpQtoqpaPTB0Cv" : {
+      "admin" : false,
+      "brukernavn" : "Mikaelbruland",
+      "passord" : "brulandmikael",
+      "poeng" : 0
+    },
+    "-La-K7KZLxp-9D3nbNbp" : {
+      "admin" : false,
+      "brukernavn" : "prøvekanin",
+      "passord" : "123",
+      "poeng" : 0
+    },
+    "-La-v9JEbCyc4sK0_3dV" : {
+      "admin" : false,
+      "brukernavn" : "Trulsepus",
+      "passord" : "mariuserkul123",
+      "poeng" : 0
+    },
+    "-LaQLsudiqKpm3ITRPxL" : {
+      "admin" : false,
+      "brukernavn" : "DarkSneezy",
+      "passord" : "Thihi",
+      "poeng" : 0
+    },
+    "-LaUEvjpAA7sjRSBPzSK" : {
+      "admin" : false,
+      "brukernavn" : "Poteter",
+      "passord" : "Smør",
+      "poeng" : 0
+    },
+    "-LavYS0TIYxGl1Y8iGJF" : {
+      "admin" : false,
+      "brukernavn" : "Truls",
+      "passord" : "Truls",
+      "poeng" : 0
+    }
+  },
+  "gjett" : {
+    "-L_kxe9o2-ICYx3gXTN1Runde1Kamp1" : {
+      "bruker" : "-L_kxe9o2-ICYx3gXTN1",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "1",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-L_kxe9o2-ICYx3gXTN1Runde1Kamp2" : {
+      "bruker" : "-L_kxe9o2-ICYx3gXTN1",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "3",
+      "lag2stilling" : "0",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomJ"
+    },
+    "-L_kxe9o2-ICYx3gXTN1Runde2Kamp1" : {
+      "bruker" : "-L_kxe9o2-ICYx3gXTN1",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyG-Cu_nA9mojQF"
+    },
+    "-L_kzzbiE0J73S3noYQnRunde1Kamp1" : {
+      "bruker" : "-L_kzzbiE0J73S3noYQn",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "0",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-L_kzzbiE0J73S3noYQnRunde1Kamp2" : {
+      "bruker" : "-L_kzzbiE0J73S3noYQn",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "2",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomK"
+    },
+    "-L_kzzbiE0J73S3noYQnRunde2Kamp1" : {
+      "bruker" : "-L_kzzbiE0J73S3noYQn",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyG-Cu_nA9mojQF"
+    },
+    "-L_rGoHKMtTkFiPGHJDYRunde1Kamp1" : {
+      "bruker" : "-L_rGoHKMtTkFiPGHJDY",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "1",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-L_rGoHKMtTkFiPGHJDYRunde1Kamp2" : {
+      "bruker" : "-L_rGoHKMtTkFiPGHJDY",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomJ"
+    },
+    "-L_rGoHKMtTkFiPGHJDYRunde2Kamp1" : {
+      "bruker" : "-L_rGoHKMtTkFiPGHJDY",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "1",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyHODDOzeHqG9fx"
+    },
+    "-L_w27MpQtoqpaPTB0CvRunde1Kamp1" : {
+      "bruker" : "-L_w27MpQtoqpaPTB0Cv",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-L_w27MpQtoqpaPTB0CvRunde1Kamp2" : {
+      "bruker" : "-L_w27MpQtoqpaPTB0Cv",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "1",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomK"
+    },
+    "-L_w27MpQtoqpaPTB0CvRunde2Kamp1" : {
+      "bruker" : "-L_w27MpQtoqpaPTB0Cv",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyG-Cu_nA9mojQF"
+    },
+    "-LaQLsudiqKpm3ITRPxLRunde1Kamp1" : {
+      "bruker" : "-LaQLsudiqKpm3ITRPxL",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "2",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyHODDOzeHqG9fy"
+    },
+    "-LaQLsudiqKpm3ITRPxLRunde1Kamp2" : {
+      "bruker" : "-LaQLsudiqKpm3ITRPxL",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "1",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomK"
+    },
+    "-LaQLsudiqKpm3ITRPxLRunde2Kamp1" : {
+      "bruker" : "-LaQLsudiqKpm3ITRPxL",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "1",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyG-Cu_nA9mojQF"
+    },
+    "-LaUEvjpAA7sjRSBPzSKRunde1Kamp1" : {
+      "bruker" : "-LaUEvjpAA7sjRSBPzSK",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "1",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-LaUEvjpAA7sjRSBPzSKRunde1Kamp2" : {
+      "bruker" : "-LaUEvjpAA7sjRSBPzSK",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "3",
+      "lag2stilling" : "1",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomJ"
+    },
+    "-LaUEvjpAA7sjRSBPzSKRunde2Kamp1" : {
+      "bruker" : "-LaUEvjpAA7sjRSBPzSK",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "3",
+      "lag2stilling" : "2",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyG-Cu_nA9mojQF"
+    },
+    "-LavYS0TIYxGl1Y8iGJFRunde1Kamp1" : {
+      "bruker" : "-LavYS0TIYxGl1Y8iGJF",
+      "kamp" : "Runde1Kamp1",
+      "lag1stilling" : "0",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyEN0w1FyvzpeZd"
+    },
+    "-LavYS0TIYxGl1Y8iGJFRunde1Kamp2" : {
+      "bruker" : "-LavYS0TIYxGl1Y8iGJF",
+      "kamp" : "Runde1Kamp2",
+      "lag1stilling" : "2",
+      "lag2stilling" : "0",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyIHpT68e1KlomK"
+    },
+    "-LavYS0TIYxGl1Y8iGJFRunde2Kamp1" : {
+      "bruker" : "-LavYS0TIYxGl1Y8iGJF",
+      "kamp" : "Runde2Kamp1",
+      "lag1stilling" : "0",
+      "lag2stilling" : "3",
+      "poeng" : 0,
+      "vinner" : "-L_rMuyHODDOzeHqG9fx"
+    }
+  },
+  "kamper" : {
+    "Runde1Kamp1" : {
+      "ferdig" : false,
+      "kampNR" : "Runde1Kamp1",
+      "lag1" : "-L_rMuyEN0w1FyvzpeZd",
+      "lag1resultat" : "TBD",
+      "lag2" : "-L_rMuyHODDOzeHqG9fy",
+      "lag2resultat" : "TBD",
+      "tilgjengelig" : true,
+      "vinner" : "TBD"
+    },
+    "Runde1Kamp2" : {
+      "ferdig" : false,
+      "kampNR" : "Runde1Kamp2",
+      "lag1" : "-L_rMuyIHpT68e1KlomJ",
+      "lag1resultat" : "TBD",
+      "lag2" : "-L_rMuyIHpT68e1KlomK",
+      "lag2resultat" : "TBD",
+      "tilgjengelig" : true,
+      "vinner" : "TBD"
+    },
+    "Runde2Kamp1" : {
+      "ferdig" : false,
+      "kampNR" : "Runde2Kamp1",
+      "lag1" : "-L_rMuyG-Cu_nA9mojQF",
+      "lag1resultat" : "TBD",
+      "lag2" : "-L_rMuyHODDOzeHqG9fx",
+      "lag2resultat" : "TBD",
+      "tilgjengelig" : true,
+      "vinner" : "TBD"
+    }
+  },
+  "lag" : {
+    "-L_rMuyEN0w1FyvzpeZd" : {
+      "link" : "https://eu.lolesports.com/en/lec/fnatic.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/logo-fnatic@2x.png",
+      "navn" : "Fnatic"
+    },
+    "-L_rMuyG-Cu_nA9mojQF" : {
+      "link" : "https://eu.lolesports.com/en/lec/g2esports.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/g-2-logo@2x.png",
+      "navn" : "G2"
+    },
+    "-L_rMuyHODDOzeHqG9fw" : {
+      "link" : "https://eu.lolesports.com/en/lec/misfitsgaming.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/misfits-logo@2x.png",
+      "navn" : "Misfits"
+    },
+    "-L_rMuyHODDOzeHqG9fx" : {
+      "link" : "https://eu.lolesports.com/en/lec/origen.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/origen-logo@2x.png",
+      "navn" : "Origen"
+    },
+    "-L_rMuyHODDOzeHqG9fy" : {
+      "link" : "https://eu.lolesports.com/en/lec/vitality.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/vitality-logo@2x.png",
+      "navn" : "Vitality"
+    },
+    "-L_rMuyIHpT68e1KlomJ" : {
+      "link" : "https://eu.lolesports.com/en/lec/splyce.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/splyce-logo@2x.png",
+      "navn" : "Splyce"
+    },
+    "-L_rMuyIHpT68e1KlomK" : {
+      "link" : "https://eu.lolesports.com/en/lec/skgaming.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/sk-logo@2x.png",
+      "navn" : "SK"
+    },
+    "-L_rMuyIHpT68e1KlomL" : {
+      "link" : "https://eu.lolesports.com/en/lec/rogue.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/rogue-logo@2x.png",
+      "navn" : "Rouge"
+    },
+    "-L_rMuyIHpT68e1KlomM" : {
+      "link" : "https://eu.lolesports.com/en/lec/excelesports.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/excel-logo@2x.png",
+      "navn" : "exceL"
+    },
+    "-L_rMuyJaIHx17SNOm5O" : {
+      "link" : "https://eu.lolesports.com/en/lec/schalke04.html",
+      "logo" : "https://eu.lolesports.com/lec-assets/v11/img/fc-schalke-logo@2x.png",
+      "navn" : "Schalke 04"
+    }
+  }
+}
