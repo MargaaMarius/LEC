@@ -63,13 +63,28 @@
       <label>Lag 2:<select id="adminInpLag2">
         <option value="TBD">TBD</option>
       </select></label>
-      <label>Kamp:<select id="kampnummerregistrer">
-        <option value="Runde1Kamp1">Runde 1 Kamp 1</option>
-        <option value="Runde1Kamp2">Runde 1 Kamp 2</option>
-        <option value="Runde2Kamp1">Runde 2 Kamp 1</option>
-        <option value="Runde2Kamp2">Runde 2 Kamp 2</option>
-        <option value="Semifinale">Semifinale</option>
-        <option value="Finale">Finale</option>
+      <label>Uke: <select id="kampnummerregistrer">
+        <option value="Uke1">Uke 1</option>
+        <option value="Uke2">Uke 2</option>
+        <option value="Uke3">Uke 3</option>
+        <option value="Uke4">Uke 4</option>
+        <option value="Uke5">Uke 5</option>
+        <option value="Uke6">Uke 6</option>
+        <option value="Uke7">Uke 7</option>
+        <option value="Uke8">Uke 8</option>
+        <option value="Uke9">Uke 9</option>
+      </select></label>
+      <label>Kamp: <select id="kampnummerregistrer2">
+        <option value="Kamp01">Kamp 1</option>
+        <option value="Kamp02">Kamp 2</option>
+        <option value="Kamp03">Kamp 3</option>
+        <option value="Kamp04">Kamp 4</option>
+        <option value="Kamp05">Kamp 5</option>
+        <option value="Kamp06">Kamp 6</option>
+        <option value="Kamp07">Kamp 7</option>
+        <option value="Kamp08">Kamp 8</option>
+        <option value="Kamp09">Kamp 9</option>
+        <option value="Kamp10">Kamp 10</option>
       </select></label>
       <button type="submit">Send inn</button>
     </form>
@@ -219,11 +234,16 @@
     let regiLag1 = document.querySelector("#adminInpLag1");
     let regiLag2 = document.querySelector("#adminInpLag2");
     let regiKamp = document.querySelector("#kampnummerregistrer");
-    let kampKey = regiKamp.value;
+    let regiKamp2 = document.querySelector("#kampnummerregistrer2");
+    let kampNummer = regiKamp.value + regiKamp2.value;
+    console.log(kampNummer);
+    console.log(regiKamp.value);
+    console.log(regiKamp2.value);
+    let kampKey = kampNummer;
     let kampData = {
       "lag1": regiLag1.value,
       "lag2": regiLag2.value,
-      "kampNR":regiKamp.value,
+      "kampNR":kampNummer,
       "lag1resultat": "TBD",
       "lag2resultat": "TBD",
       "vinner": "TBD",
